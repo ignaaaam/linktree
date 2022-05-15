@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Link;
 
 class User extends Authenticatable
 {
@@ -18,9 +19,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'background_color',
+        'text_color'
     ];
 
     /**
@@ -33,12 +36,16 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function links() {
+        return $this->hasMany(Link::class);
+    }
+
+    public function visits() {
+        return $this->hasManyThrough(Visit::class, Link::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'username';
+    }
 }
